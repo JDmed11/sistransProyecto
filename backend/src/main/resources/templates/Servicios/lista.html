@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Servicios</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Servicios</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Itera a través de la lista de tipos de usuario y muestra cada uno en una fila de la tabla -->
+                <tr th:each="servicio : ${servicios}">
+                    <td th:text="${servicio.id}"></td>
+                    <td th:text="${servicio.nombre}"></td>
+                    <td>
+                        <a th:href="@{/servicios/editar/{id}(id=${servicio.id})}"  class="btn btn-info" >Editar</a>
+                        <a th:href="@{/servicios/eliminar/{id}(id=${servicio.id})}" class="btn btn-danger"
+                        onclick="return confirm('¿Estás seguro de borrar este servicio?')">Borrar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a class="btn btn-success" th:href="@{/servicios/nuevo}">Crear Nuevo Servicio</a>
+        <a class="btn btn-danger" th:href="@{/adminDb}">Regresar</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario para Crear un plan de consumo</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario para Crear un plan de consumo</h1>
+        <form th:action="@{/planesConsumo/nuevo/guardar}" method="post">
+            <div class="form-group">
+                <label for="id">Id del plan de consumo</label>
+                <input type="number" class="form-control" id="id" name="id" placeholder="Id" required th:value="${planConsumo.id}" >
+                <label for="nombre">Nombre del plan de consumo:</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required th:value="${planConsumo.nombre}">
+                <label for="nombre">Descripcion:</label>
+                <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Descripcion" required th:value="${planConsumo.descripcion}">
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</body>
+</html>

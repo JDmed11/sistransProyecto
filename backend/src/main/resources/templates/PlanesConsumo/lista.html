@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>planes de consumo</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de planes de consumo</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Itera a través de la lista de tipos de usuario y muestra cada uno en una fila de la tabla -->
+                <tr th:each="plan : ${planesConsumo}">
+                    <td th:text="${plan.id}"></td>
+                    <td th:text="${plan.nombre}"></td>
+                    <td th:text="${plan.descripcion}"></td>
+                    <td>
+                        <a th:href="@{/planesConsumo/editar/{id}(id=${plan.id})}"  class="btn btn-info" >Editar</a>
+                        <a th:href="@{/planesConsumo/eliminar/{id}(id=${plan.id})}" class="btn btn-danger"
+                        onclick="return confirm('¿Estás seguro de borrar este plan de consumo?')">Borrar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a class="btn btn-success" th:href="@{/planesConsumo/nuevo}">Crear Nuevo plan de consumo</a>
+        <a class="btn btn-danger" th:href="@{/adminDb}">Regresar</a>
+    </div>
+</body>
+</html>

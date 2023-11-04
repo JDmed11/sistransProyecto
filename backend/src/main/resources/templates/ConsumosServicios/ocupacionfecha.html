@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario para generar un consumo de servicio</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario para generar un consumo de servicio</h1>
+        <form th:action="@{/consumosServicios/ocupacion}" method="get">
+            <div class="form-group">
+                    
+                    <label for="fecha_inicio">fecha de inicio</label>
+                    <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" placeholder="fecha_inicio"required th:value="${fecha_inicio}" >
+
+                    <label for="fecha_fin">fecha de fin</label>
+                    <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" placeholder="fecha_fin" required th:value="${fecha_fin}" >
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        <a th:href="@{/gerente}"class="btn btn-danger">Cancelar</a>
+    </div>
+</body>
+</html>

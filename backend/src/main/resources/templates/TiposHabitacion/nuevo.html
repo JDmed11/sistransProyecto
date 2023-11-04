@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario para Crear un Tipo de Habitacion</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario para Crear un Tipo de Habitacion</h1>
+        <form th:action="@{/tiposHabitacion/nuevo/guardar}" method="post">
+            <div class="form-group">
+                <label for="id">Id del tipo de habitacion</label>
+                <input type="number" class="form-control" id="id" name="id" placeholder="Id" required th:value="${tipoHabitacion.id}" >
+
+                <label for="nombre">Nombre del Tipo de habitacion:</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required th:value="${tipoHabitacion.nombre}">
+
+                <label for="capacidad">Capacidad</label>
+                <input type="number" class="form-control" id="capacidad" name="capacidad" placeholder="Capacidad" required th:value="${tipoHabitacion.capacidad}">
+
+                <label for="costo_noche">Costo noche</label>
+                <input type="number" class="form-control" id="costo_noche" name="costo_noche" placeholder="costo_noche" required th:value="${tipoHabitacion.costo_noche}">
+
+                <label for="tiene_jacuzzi">Jacuzzi</label>
+                <select class="form-control" id="tiene_jacuzzi" name="tiene_jacuzzi" required>
+                    <option value="1" th:selected="${tipoHabitacion.tiene_jacuzzi eq '1'}">SI</option>
+                    <option value="0" th:selected="${tipoHabitacion.tiene_jacuzzi eq '0'}">NO</option>
+                </select>
+                <label for="tiene_cocina">Cocina</label>
+                <select class="form-control" id="tiene_cocina" name="tiene_cocina" required>
+                    <option value="1" th:selected="${tipoHabitacion.tiene_cocina eq '1'}">SI</option>
+                    <option value="0" th:selected="${tipoHabitacion.tiene_cocina eq '0'}">NO</option>
+                </select>
+                <label for="tiene_comedor">Comedor</label>
+                <select class="form-control" id="tiene_comedor" name="tiene_comedor" required>
+                    <option value="1" th:selected="${tipoHabitacion.tiene_comedor eq '1'}">SI</option>
+                    <option value="0" th:selected="${tipoHabitacion.tiene_comedor eq '0'}">NO</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</body>
+</html>

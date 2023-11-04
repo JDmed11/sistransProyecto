@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ocupacion por habitacion</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+    <div class="container">
+        <h1>ocupacion por habitacion
+        </h1>
+        <p>Esta lista es entre las fechas <b th:text="${fecha_inicio}"></b> y 
+        <b th:text="${fecha_fin}"></b> para el usuario con documento <b th:text="${documento}"></b></p>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Documento</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="g : ${gasto}">
+                    <td th:text="${g.nombre}"></td>
+                    <td th:text="${g.documento}"></td>
+                    <td th:text="${g.total} + '$'"></td>
+                </tr>
+
+            </tbody>
+        </table>
+        <a class="btn btn-danger" th:href = "@{/gerente}">Regresar</a>
+    </div>
+
+
+
+</body>
+</html>

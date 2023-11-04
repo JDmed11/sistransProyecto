@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Consumos de servicios</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de consumos de servicios</h1>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Estado</th>
+                    <th>Fecha de inicio</th>
+                    <th>Fecha de fin</th>
+                    <th>Costo</th>
+                    <th>Reserva de alojamiento</th>
+                    <th>Servicio</th>
+                    <th>Emisor</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="consumoServicio : ${consumosServicios}">
+                    <td th:text="${consumoServicio.id}"></td>
+                    <td th:text="${consumoServicio.estado}"></td>
+                    <td th:text="${consumoServicio.fecha_inicio}"></td>
+                    <td th:text="${consumoServicio.fecha_fin}"></td>
+                    <td th:text="${consumoServicio.costo}"></td>
+                    <td th:text="${consumoServicio.reserva_alojamiento.id}"></td>
+                    <td th:text="${consumoServicio.servicio.nombre}"></td>
+                    <td th:text="${consumoServicio.emisor.id}"></td>
+                    <td>
+                        <a class="btn btn-info" th:href="@{/consumosServicios/ver/{id}(id=${consumoServicio.id})}">Ver</a>
+                        <a class="btn btn-warning" th:href="@{/consumosServicios/editar/{id}(id=${consumoServicio.id})}">Editar</a>
+                        <a class="btn btn-danger" th:href="@{/consumosServicios/eliminar/{id}(id=${consumoServicio.id})}">Eliminar</a>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <a class="btn btn-primary" th:href="@{/consumosServicios/nuevo}">Nuevo</a>
+        <a class="btn btn-danger" th:href = "@{/}">Regresar</a>
+    </div>
+
+
+
+</body>
+</html>

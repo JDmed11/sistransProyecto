@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Habitaciones</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de habitaciones</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                   <th>Numero de habitacion</th>
+                   <th>tipo de habitacion</th>
+                   <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="habitacion : ${habitaciones}">
+                    <td th:text="${habitacion.numero_habitacion}"></td>
+                    <td th:text="${habitacion.tipo_habitacion.nombre}"></td>
+                    <td>
+                        <a class="btn btn-info" th:href="@{/habitaciones/editar/{numero_habitacion}(numero_habitacion=${habitacion.numero_habitacion})}">Editar</a>
+                        <a class="btn btn-danger" th:href="@{/habitaciones/eliminar/{numero_habitacion}(numero_habitacion=${habitacion.numero_habitacion})}">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a class="btn btn-success" th:href="@{/habitaciones/nuevo}">Crear Nueva habitacion</a>
+        <a class="btn btn-danger" th:href="@{/adminDb}">Regresar</a>
+    </div>
+</body>
+</html>

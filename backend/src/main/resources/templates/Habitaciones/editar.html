@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario habitacion</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario para editar una habitacion</h1>
+        <form th:action="@{'/habitaciones/editar/' + ${habitacion.numero_habitacion}+ '/guardar'}" th:object="${habitacion}" method="post" >
+            <div class="form-group">        
+                <label class="col-form-label" for="tipo_habitacion">Tipo de habitacion</label>
+                <select class="form-control" id="tipo_habitacion" name="tipo_habitacion" required>
+                <th:block th:each="tipoHabitacion : ${tiposHabitacion}" >
+                    <option th:value="${tipoHabitacion.id}" th:text="${tipoHabitacion.nombre}" th:selected="${habitacion!=null || habitacion.tipo_habitacion == tipoHabitacion.id}"></option>
+                </th:block>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</body>
+</html>

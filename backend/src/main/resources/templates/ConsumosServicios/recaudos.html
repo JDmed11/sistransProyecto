@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>recaudo de consumos de servicios por habitacion</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+    <div class="container">
+        <h1>recaudo de consumos de servicios por habitacion</h1>
+        <p>Esta lista es entre las fechas <b th:text="${fecha_inicio}"></b> y <b th:text="${fecha_fin}"></b></p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Recaudo</th>
+                    <th>Habitacion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="recaudo : ${recaudos}">
+                    <td th:text="${recaudo.recaudo}"></td>
+                    <td th:text="${recaudo.habitacion}"></td>
+                </tr>
+
+            </tbody>
+        </table>
+        <a class="btn btn-danger" th:href = "@{/gerente}">Regresar</a>
+    </div>
+
+
+
+</body>
+</html>

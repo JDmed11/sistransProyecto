@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>reservas de alojamiento</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de reservas de alojamiento</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha de entrada</th>
+                    <th>Fecha de salida</th>
+                    <th>Acompaniantes</th>
+                    <th>Estado</th>
+                    <th>Habitacion</th>
+                    <th>Plan de consumo</th>
+                    <th>Cliente</th>
+                    <th>Nombre cliente</th>
+                    <th>Saldo</th>
+                    <th>Acciones</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Itera a través de la lista de tipos de usuario y muestra cada uno en una fila de la tabla -->
+                <tr th:each="reserva : ${reservasAlojamiento}">
+                    <td th:text="${reserva.id}"></td>
+                    <td th:text="${reserva.fecha_entrada}"></td>
+                    <td th:text="${reserva.fecha_salida}"></td>
+                    <td th:text="${reserva.acompaniantes}"></td>
+                    <td th:text="${reserva.estado}"></td>
+                    <td th:text="${reserva.habitacion.numero_habitacion}"></td>
+                    <td th:text="${reserva.plan_consumo.nombre}"></td>
+                    <td th:text="${reserva.cliente.numeroDocumento}"></td>
+                    <td th:text="${reserva.cliente.nombre}"></td>
+                    <td th:text="${reserva.saldo}"></td>
+                    <td>
+                        <a th:href="@{/reservasAlojamiento/editar/{id}(id=${reserva.id})}"  class="btn btn-info" >Editar</a>
+                        <a th:href="@{/reservasAlojamiento/eliminar/{id}(id=${reserva.id})}" class="btn btn-danger"
+                        onclick="return confirm('¿Estás seguro de borrar esta reserva de alojamiento?')">Borrar</a>
+                </tr>
+            </tbody>
+        </table>
+        <a class="btn btn-success" th:href="@{/reservasAlojamiento/nuevo}">Crear Nueva reserva de alojamiento</a>
+        <a class="btn btn-danger" th:href="@{/}">Regresar</a>
+    </div>
+</body>
+</html>

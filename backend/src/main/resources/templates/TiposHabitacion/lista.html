@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>tipos de habitacion</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Tipos de habitacion</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Capacidad</th>
+                    <th>Costo Noche</th>
+                    <th>Tiene jacuzzi</th>
+                    <th>Tiene cocina</th>
+                    <th>Tiene Comedor</th>
+
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tipoHabitacion : ${tiposHabitacion}">
+                    <td th:text="${tipoHabitacion.id}">ID</td>
+                    <td th:text="${tipoHabitacion.nombre}">Nombre</td>
+                    <td th:text="${tipoHabitacion.capacidad}">Capacidad</td>
+                    <td th:text="${tipoHabitacion.costo_noche}">Costo Noche</td>
+                    <td th:text="${tipoHabitacion.tiene_jacuzzi}">Tiene Jacuzzi</td>
+                    <td th:text="${tipoHabitacion.tiene_cocina}">Tiene Cocina</td>
+                    <td th:text="${tipoHabitacion.tiene_comedor}">Tiene Comedor</td>
+                    <td>
+                        <a th:href="@{/tiposHabitacion/editar/{id}(id=${tipoHabitacion.id})}"  class="btn btn-info" >Editar</a>
+                        <a th:href="@{/tiposHabitacion/eliminar/{id}(id=${tipoHabitacion.id})}" class="btn btn-danger"
+                        onclick="return confirm('¿Estás seguro de borrar este tipo de habitacion?')">Borrar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a class="btn btn-success" th:href="@{/tiposHabitacion/nuevo}">Crear Nuevo Tipo de habitacion</a>
+        <a class="btn btn-danger" th:href="@{/adminDb}">Regresar</a>
+    </div>
+</body>
+</html>

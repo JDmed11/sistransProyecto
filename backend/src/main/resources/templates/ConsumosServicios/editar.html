@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario para generar un consumo de servicio</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario para generar un consumo de servicio</h1>
+        <form th:action="@{'/consumosServicios/editar/' + ${id} + '/guardar'}" method="post" th:object="${consumoServicio}">
+            <div class="form-group">
+                        
+                    <label for="estado">Estado</label>
+                    <select class="form-control" id="estado" name="estado" required>
+                        <option value="reservado">Reservada</option>
+                    </select>
+    
+                    <label for="fecha_inicio">Fecha de inicio</label>
+                    <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" placeholder="Fecha de inicio" required th:value="${consumoServicio.fecha_inicio}" >
+    
+                    <label for="fecha_fin">Fecha de fin</label>
+                    <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" placeholder="Fecha de fin" required th:value="${consumoServicio.fecha_fin}" >
+    
+                    <label for="costo">Costo</label>
+                    <input type="number" class="form-control" id="costo" name="costo" placeholder="Costo" required th:value="${consumoServicio.costo}" >
+    
+                    <label for="reserva_alojamiento">Reserva de alojamiento</label>
+                    <select class="form-control" id="reserva_alojamiento" name="reserva_alojamiento" required>
+                        <th:block th:each="reservaAlojamiento : ${reservasAlojamiento}" >
+                            <option th:value="${reservaAlojamiento.id}" th:text="${reservaAlojamiento.id}" th:selected="${reservaAlojamiento!=null || consumoServicio.reservaAlojamiento.id == reservaAlojamiento.id}"></option>
+                        </th:block>
+                    </select>
+    
+                    <label for="servicio">Servicio</label>
+                    <select class="form-control" id="servicio" name="servicio" required>
+                        <th:block th:each="servicio : ${servicios}" >
+                            <option th:value="${servicio.id}" th:text="${servicio.nombre}" th:selected="${servicio!=null || consumoServicio.servicio.id == servicio.id}"></option>
+                        </th:block>
+                    </select>
+
+                    <label for="emisor">Emisor</label>
+                    <select class="form-control" id="emisor" name="emisor" required>
+                        <th:block th:each="emisor : ${usuarios}" >
+                            <option th:value="${emisor.id}" th:text="${emisor.nombre}" th:selected="${emisor!=null || consumoServicio.emisor.id == emisor.id}"></option>
+                        </th:block>
+                    </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        <a th:href="@{/}"class="btn btn-danger">Cancelar</a>
+    </div>
+</body>
+</html>

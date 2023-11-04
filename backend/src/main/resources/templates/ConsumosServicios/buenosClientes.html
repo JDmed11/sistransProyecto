@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ocupacion por habitacion</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+    <div class="container">
+        <h1>Buenos clientes
+        </h1>
+        <p>Esta lista es entre las fechas <b th:text="${fecha_inicio}"></b> y 
+        <b th:text="${fecha_fin}"> </b></p>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Dias</th>
+                    <th>gasto total</th>
+                    <th>nombre cliente</th>
+                    <th>documento cliente</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cliente : ${clientes}">
+                    <td th:text="${cliente.dias}"></td>
+                    <td th:text="${cliente.gasto} + '$'"></td>
+                    <td th:text="${cliente.nombre}"></td>
+                    <td th:text="${cliente.documento}"></td>
+                </tr>
+
+            </tbody>
+        </table>
+        <a class="btn btn-danger" th:href = "@{/gerente}">Regresar</a>
+    </div>
+
+
+
+</body>
+</html>

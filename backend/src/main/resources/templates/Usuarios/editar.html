@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario editar Usuario</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario para editar un usuario</h1>
+        <form th:action="@{'/usuarios/editar/' + ${usuario.id} + '/guardar'}" th:object="${usuario}"  method="post">
+            <div class="form-group">
+
+                <label class="col-form-label" for="tipoDocumento">Tipo Documento</label>
+                <select class="form-control" id="tipoDocumento" name="tipoDocumento" required>
+                    <option value="CC" th:selected="${usuario.tipoDocumento eq 'CC'}">CC</option>
+                    <option value="TI" th:selected="${usuario.tipoDocumento eq 'TI'}">TI</option>
+                    <option value="CC" th:selected="${usuario.tipoDocumento eq 'CE'}">CE</option>
+                </select>
+
+                <label class="col-form-label" for="numeroDocumento">numero Documento</label>
+                <input class="form-control" type="text" id="numeroDocumento" name="numeroDocumento" required th:value="${usuario.numeroDocumento}"/>
+
+                <label class="col-form-label" for="nombre">Nombre</label>
+                <input class="form-control" type="text" id="nombre" name="nombre" required th:value="${usuario.nombre}"/>
+
+                <label class="col-form-label" for="correo">correo</label>
+                <input class="form-control" type="text" id="correo" name="correo" required th:value="${usuario.correo}"/>
+
+                <label class="col-form-label" for="tipoUsuario">Tipo de usuario:</label>
+                <select class="form-control" id="tipoUsuario" name="tipoUsuario" required>
+                <th:block th:each="tipoUsuario : ${tiposUsuario}" >
+                    <option th:value="${tipoUsuario.id}" th:text="${tipoUsuario.nombre}" th:selected="${usuario!=null || usuario.tipoUsuario.id == tipoUsuario.id}"></option>
+                </th:block>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</body>
+</html>

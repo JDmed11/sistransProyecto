@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario reservas alojamiento</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario para crear una reserva de alojamiento</h1>
+        <form th:action="@{'/reservasAlojamiento/editar/' + ${reserva.id} + '/guardar'}" method="post" th:object="${reserva}">
+            <div class="form-group">
+
+                <label for="fecha_entrada">Fecha de entrada</label>
+                <input type="date" class="form-control" id="fecha_entrada" name="fecha_entrada" placeholder="Fecha de entrada" required th:value="${reserva.fecha_entrada}" >
+
+                <label for="fecha_salida">Fecha de salida</label>
+                <input type="date" class="form-control" id="fecha_salida" name="fecha_salida" placeholder="Fecha de salida" required th:value="${reserva.fecha_salida}" >
+                
+                <label for="acompaniantes">Acompaniantes</label>
+                <input type="number" class="form-control" id="acompaniantes" name="acompaniantes" placeholder="Acompaniantes" required th:value="${reserva.acompaniantes}" >
+
+                <label for="estado">Estado</label>
+                <select class="form-control" id="estado" name="estado" required>
+                    <option value="activa">Activa</option>
+                    <option value="finalizada">Finalizada</option>
+                    <option value="reservada">Reservada</option>
+                </select>
+
+                <label for="habitacion">Habitacion</label>
+                <select class="form-control" id="habitacion" name="habitacion" required>
+                    <th:block th:each="habitacion : ${habitaciones}" >
+                        <option th:value="${habitacion.numero_habitacion}" th:text="${habitacion.numero_habitacion}" th:selected="${habitacion!=null || reserva.numero_habitacion == habitacion.numero_habitacion}"></option>
+                    </th:block>
+                </select>
+
+                <label for="plan_consumo">Plan de consumo</label>
+                <select class="form-control" id="plan_consumo" name="plan_consumo" required>
+                    <th:block th:each="planConsumo : ${planesConsumo}" >
+                        <option th:value="${planConsumo.id}" th:text="${planConsumo.nombre}" th:selected="${planConsumo!=null || reserva.plan_consumo.id == planConsumo.id}"></option>
+                    </th:block>
+                </select>
+
+                <label for="saldo">Saldo</label>
+                <input type="number" class="form-control" id="saldo" name="saldo" placeholder="Saldo" required th:value="${reserva.saldo}" >
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</body>
+</html>

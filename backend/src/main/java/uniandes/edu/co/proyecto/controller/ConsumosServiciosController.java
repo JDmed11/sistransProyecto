@@ -48,15 +48,106 @@ public class ConsumosServiciosController {
         return "ConsumosServicios/lista"; 
     }
 
-    @GetMapping("/consumosServicios/buenosClientes/fecha")
-    public String getBuenosClientesFecha(Model model, String fecha_inicio, String fecha_fin){
-        model.addAttribute("fecha_inicio", fecha_inicio);
-        model.addAttribute("fecha_fin", fecha_fin);
-        return "ConsumosServicios/buenClienteFecha";
+    @GetMapping("/consumosServicios/nuevo")
+    public String nuevo(Model model){
+        model.addAttribute("consumoServicio", new ConsumoServicio());
+        model.addAttribute("reservasAlojamiento", reservaAlojamientoRepository.getAll());
+        model.addAttribute("servicios", servicioRepository.getAll());
+        model.addAttribute("usuarios", usuarioRepository.getAll());
+
+        return "ConsumosServicios/nuevo";
     }
 
-    @GetMapping("/consumosServicios/buenosClientes")
-    public String getBuenosClientes(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
+    @PostMapping("/consumosServicios/nuevo/guardar")
+    public String guardar(@ModelAttribute ConsumoServicio consumoServicio){
+        consumoServicio.getReserva_alojamiento().setSaldo(consumoServicio.getReserva_alojamiento().getSaldo() + consumoServicio.getCosto());
+        consumosServiciosRepository.insert(consumoServicio.getId(), consumoServicio.getEstado().name(), consumoServicio.getFecha_inicio(), consumoServicio.getFecha_fin(), consumoServicio.getCosto(), consumoServicio.getReserva_alojamiento().getId(), consumoServicio.getServicio().getId(), consumoServicio.getEmisor().getId());
+        return "redirect:/consumosServicios";
+    }
+    
+    @GetMapping("/consumosServicios/editar/{id}")
+    public String editar(@PathVariable("id") Long id, Model model){
+        ConsumoServicio consumoServicio = consumosServiciosRepository.getById(id);
+        if(consumoServicio != null){
+            model.addAttribute("consumoServicio", consumoServicio);
+            model.addAttribute("reservasAlojamiento", reservaAlojamientoRepository.getAll());
+            model.addAttribute("servicios", servicioRepository.getAll());
+            model.addAttribute("usuarios", usuarioRepository.getAll());
+            return "ConsumosServicios/editar";
+        }
+        else{
+            return "redirect:/consumosServicios";
+        }
+    }
+
+    @PostMapping("/consumosServicios/editar/{id}/guardar")
+    public String guardarEdicion(@PathVariable("id") Long id, @ModelAttribute ConsumoServicio consumoServicio){
+        consumosServiciosRepository.update(id, consumoServicio.getEstado().name(), consumoServicio.getFecha_inicio(), consumoServicio.getFecha_fin(), consumoServicio.getCosto(), consumoServicio.getReserva_alojamiento().getId(), consumoServicio.getServicio().getId(), consumoServicio.getEmisor().getId());
+        return "redirect:/consumosServicios";
+    }
+
+    @GetMapping("/consumosServicios/eliminar/{id}")
+    public String eliminar(@PathVariable("id") Long id){
+        consumosServiciosRepository.deleteById(id);
+        return "redirect:/consumosServicios";
+    }
+
+    //CONSULTAS AVANZADAS
+
+    @GetMapping("/consumosServicios/recaudo/fecha")
+    public String getRecaudosServiciosFecha(Model model, String fecha_inicio, String fecha_fin){
+
+    model.addAttribute("fecha_inicio", fecha_inicio);
+    model.addAttribute("fecha_fin", fecha_fin);
+
+    return "ConsumosServicios/recaudoFecha";
+    }
+
+
+    @GetMapping("/consumosServicios/recaudo")
+    public String getRecaudosServicios(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(fecha_inicio, formatter);
+        LocalDate date2 = LocalDate.parse(fecha_fin, formatter);
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+
+        // Convierte la fecha a la representación deseada
+        String formattedDate = date.format(outputFormatter);
+        String formattedDate2 = date2.format(outputFormatter);
+        
+
+        
+        Collection<consumosHabitacion> recaudos = consumosServiciosRepository.getRecaudoServicios(formattedDate, formattedDate2);
+        model.addAttribute("recaudos", recaudos);
+        model.addAttribute("fecha_inicio", formattedDate);
+        model.addAttribute("fecha_fin", formattedDate2);
+    
+
+        if(recaudos.iterator().hasNext()){
+            model.addAttribute("recaudo", recaudos.iterator().next().getRecaudo());
+            model.addAttribute("habitacion", recaudos.iterator().next().getHabitacion());
+        }
+        else
+        {
+            model.addAttribute("recaudo", "No hay recaudos");
+            model.addAttribute("habitacion", "No hay recaudos");
+        }
+        System.out.println(recaudos);
+
+        return "ConsumosServicios/recaudos";
+    }
+
+    @GetMapping("/consumosServicios/ranking/fecha")
+    public String getRankingServiciosFecha(Model model, String fecha_inicio, String fecha_fin){
+            model.addAttribute("fecha_inicio", fecha_inicio);
+    model.addAttribute("fecha_fin", fecha_fin);
+
+    return "ConsumosServicios/rankingFecha";
+    }
+
+    @GetMapping("/consumosServicios/ranking")
+    public String getRankingServicios(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(fecha_inicio, formatter);
@@ -68,27 +159,66 @@ public class ConsumosServiciosController {
         String formattedDate = date.format(outputFormatter);
         String formattedDate2 = date2.format(outputFormatter);
 
-        Collection<BuenosClientes> buenosClientes = consumosServiciosRepository.getBuenosClientes(formattedDate, formattedDate2);
-        model.addAttribute("clientes", buenosClientes);
+        Collection<serviciosMasSolicitados> ranking = consumosServiciosRepository.getServiciosMasSolicitados(formattedDate, formattedDate2);
         model.addAttribute("fecha_inicio", formattedDate);
         model.addAttribute("fecha_fin", formattedDate2);
-
-        if(buenosClientes.iterator().hasNext()){
-            model.addAttribute("nombre", buenosClientes.iterator().next().getNombre());
-            model.addAttribute("documento", buenosClientes.iterator().next().getDocumento());
-            model.addAttribute("dias", buenosClientes.iterator().next().getDias());
-            model.addAttribute("gasto", buenosClientes.iterator().next().getGasto());
+        model.addAttribute("ranking", ranking);
+        if (ranking.iterator().hasNext()){
+            model.addAttribute("nombre", ranking.iterator().next().getNombre());
+            model.addAttribute("cantidad", ranking.iterator().next().getCantidad());
         }
         else
         {
-            model.addAttribute("nombre", "No hay buenos clientes");
-            model.addAttribute("documento", "No hay buenos clientes");
-            model.addAttribute("dias", "No hay buenos clientes");
-            model.addAttribute("gasto", "No hay buenos clientes");
+            model.addAttribute("nombre", "No hay servicios");
+            model.addAttribute("cantidad", "No hay servicios");
         }
-        System.out.println(buenosClientes);
+        
+        System.out.println(ranking);
 
-        return "ConsumosServicios/buenosClientes";
+        return "ConsumosServicios/ranking";
+    }
+
+    @GetMapping("/consumosServicios/ocupacion/fecha")
+    //deberia ir en reservas de alojamiento
+    public String getOcupacionHabitacionFecha(Model model, String fecha_inicio, String fecha_fin){
+        model.addAttribute("fecha_inicio", fecha_inicio);
+        model.addAttribute("fecha_fin", fecha_fin);
+        return "ConsumosServicios/ocupacionFecha";
+    }
+
+    @GetMapping("/consumosServicios/ocupacion")
+    //debera ir en reservas de alojamiento
+    public String getOcupacionHabitacion(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(fecha_inicio, formatter);
+        LocalDate date2 = LocalDate.parse(fecha_fin, formatter);
+        System.out.println(date);
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+
+        // Convierte la fecha a la representación deseada
+        String formattedDate = date.format(outputFormatter);
+        String formattedDate2 = date2.format(outputFormatter);
+
+        Collection<ocupacionHabitacion> ocupacion = consumosServiciosRepository.getOcupacionHabitacion(formattedDate, formattedDate2);
+        model.addAttribute("ocupacion", ocupacion);
+        model.addAttribute("fecha_inicio", formattedDate);
+        model.addAttribute("fecha_fin", formattedDate2);
+
+        if(ocupacion.iterator().hasNext()){
+            model.addAttribute("dias", ocupacion.iterator().next().getDias());
+            model.addAttribute("habitacion", ocupacion.iterator().next().getHabitacion());
+            model.addAttribute("porcentaje", ocupacion.iterator().next().getPorcentaje());
+        }
+        else
+        {
+            model.addAttribute("dias", "No hay ocupación");
+            model.addAttribute("habitacion", "No hay ocupación");
+            model.addAttribute("porcentaje", "No hay ocupación");
+        }
+        System.out.println(ocupacion);
+
+        return "ConsumosServicios/ocupacion";
     }
 
     @GetMapping("/consumosServicios/gastoUsuario/fecha")
@@ -136,19 +266,15 @@ public class ConsumosServiciosController {
         return "ConsumosServicios/gastoUsuario";
     }
 
-
-
-    @GetMapping("/consumosServicios/ocupacion/fecha")
-    //deberia ir en reservas de alojamiento
-    public String getOcupacionHabitacionFecha(Model model, String fecha_inicio, String fecha_fin){
+     @GetMapping("/consumosServicios/buenosClientes/fecha")
+    public String getBuenosClientesFecha(Model model, String fecha_inicio, String fecha_fin){
         model.addAttribute("fecha_inicio", fecha_inicio);
         model.addAttribute("fecha_fin", fecha_fin);
-        return "ConsumosServicios/ocupacionFecha";
+        return "ConsumosServicios/buenClienteFecha";
     }
 
-    @GetMapping("/consumosServicios/ocupacion")
-    //debera ir en reservas de alojamiento
-    public String getOcupacionHabitacion(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
+    @GetMapping("/consumosServicios/buenosClientes")
+    public String getBuenosClientes(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(fecha_inicio, formatter);
@@ -160,152 +286,26 @@ public class ConsumosServiciosController {
         String formattedDate = date.format(outputFormatter);
         String formattedDate2 = date2.format(outputFormatter);
 
-        Collection<ocupacionHabitacion> ocupacion = consumosServiciosRepository.getOcupacionHabitacion(formattedDate, formattedDate2);
-        model.addAttribute("ocupacion", ocupacion);
+        Collection<BuenosClientes> buenosClientes = consumosServiciosRepository.getBuenosClientes(formattedDate, formattedDate2);
+        model.addAttribute("clientes", buenosClientes);
         model.addAttribute("fecha_inicio", formattedDate);
         model.addAttribute("fecha_fin", formattedDate2);
 
-        if(ocupacion.iterator().hasNext()){
-            model.addAttribute("dias", ocupacion.iterator().next().getDias());
-            model.addAttribute("habitacion", ocupacion.iterator().next().getHabitacion());
-            model.addAttribute("porcentaje", ocupacion.iterator().next().getPorcentaje());
+        if(buenosClientes.iterator().hasNext()){
+            model.addAttribute("nombre", buenosClientes.iterator().next().getNombre());
+            model.addAttribute("documento", buenosClientes.iterator().next().getDocumento());
+            model.addAttribute("dias", buenosClientes.iterator().next().getDias());
+            model.addAttribute("gasto", buenosClientes.iterator().next().getGasto());
         }
         else
         {
-            model.addAttribute("dias", "No hay ocupación");
-            model.addAttribute("habitacion", "No hay ocupación");
-            model.addAttribute("porcentaje", "No hay ocupación");
+            model.addAttribute("nombre", "No hay buenos clientes");
+            model.addAttribute("documento", "No hay buenos clientes");
+            model.addAttribute("dias", "No hay buenos clientes");
+            model.addAttribute("gasto", "No hay buenos clientes");
         }
-        System.out.println(ocupacion);
+        System.out.println(buenosClientes);
 
-        return "ConsumosServicios/ocupacion";
-    }
-
-    @GetMapping("/consumosServicios/ranking/fecha")
-    public String getRankingServiciosFecha(Model model, String fecha_inicio, String fecha_fin){
-            model.addAttribute("fecha_inicio", fecha_inicio);
-    model.addAttribute("fecha_fin", fecha_fin);
-
-    return "ConsumosServicios/rankingFecha";
-    }
-
-    @GetMapping("/consumosServicios/ranking")
-    public String getRankingServicios(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(fecha_inicio, formatter);
-        LocalDate date2 = LocalDate.parse(fecha_fin, formatter);
-        System.out.println(date);
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
-
-        // Convierte la fecha a la representación deseada
-        String formattedDate = date.format(outputFormatter);
-        String formattedDate2 = date2.format(outputFormatter);
-
-        Collection<serviciosMasSolicitados> ranking = consumosServiciosRepository.getServiciosMasSolicitados(formattedDate, formattedDate2);
-        model.addAttribute("fecha_inicio", formattedDate);
-        model.addAttribute("fecha_fin", formattedDate2);
-        model.addAttribute("ranking", ranking);
-        if (ranking.iterator().hasNext()){
-            model.addAttribute("nombre", ranking.iterator().next().getNombre());
-            model.addAttribute("cantidad", ranking.iterator().next().getCantidad());
-        }
-        else
-        {
-            model.addAttribute("nombre", "No hay servicios");
-            model.addAttribute("cantidad", "No hay servicios");
-        }
-        
-        System.out.println(ranking);
-
-        return "ConsumosServicios/ranking";
-    }
-
-    @GetMapping("/consumosServicios/recaudo/fecha")
-    public String getRecaudosServiciosFecha(Model model, String fecha_inicio, String fecha_fin){
-
-    model.addAttribute("fecha_inicio", fecha_inicio);
-    model.addAttribute("fecha_fin", fecha_fin);
-
-    return "ConsumosServicios/recaudoFecha";
-    }
-
-
-    @GetMapping("/consumosServicios/recaudo")
-    public String getRecaudosServicios(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(fecha_inicio, formatter);
-        LocalDate date2 = LocalDate.parse(fecha_fin, formatter);
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
-
-        // Convierte la fecha a la representación deseada
-        String formattedDate = date.format(outputFormatter);
-        String formattedDate2 = date2.format(outputFormatter);
-        
-
-        
-        Collection<consumosHabitacion> recaudos = consumosServiciosRepository.getRecaudoServicios(formattedDate, formattedDate2);
-        model.addAttribute("recaudos", recaudos);
-        model.addAttribute("fecha_inicio", formattedDate);
-        model.addAttribute("fecha_fin", formattedDate2);
-    
-
-        if(recaudos.iterator().hasNext()){
-            model.addAttribute("recaudo", recaudos.iterator().next().getRecaudo());
-            model.addAttribute("habitacion", recaudos.iterator().next().getHabitacion());
-        }
-        else
-        {
-            model.addAttribute("recaudo", "No hay recaudos");
-            model.addAttribute("habitacion", "No hay recaudos");
-        }
-        System.out.println(recaudos);
-
-        return "ConsumosServicios/recaudos";
-    }
-
-    @GetMapping("/consumosServicios/nuevo")
-    public String nuevo(Model model){
-        model.addAttribute("consumoServicio", new ConsumoServicio());
-        model.addAttribute("reservasAlojamiento", reservaAlojamientoRepository.getAll());
-        model.addAttribute("servicios", servicioRepository.getAll());
-        model.addAttribute("usuarios", usuarioRepository.getAll());
-
-        return "ConsumosServicios/nuevo";
-    }
-
-    @PostMapping("/consumosServicios/nuevo/guardar")
-    public String guardar(@ModelAttribute ConsumoServicio consumoServicio){
-        consumoServicio.getReserva_alojamiento().setSaldo(consumoServicio.getReserva_alojamiento().getSaldo() + consumoServicio.getCosto());
-        consumosServiciosRepository.insert(consumoServicio.getId(), consumoServicio.getEstado().name(), consumoServicio.getFecha_inicio(), consumoServicio.getFecha_fin(), consumoServicio.getCosto(), consumoServicio.getReserva_alojamiento().getId(), consumoServicio.getServicio().getId(), consumoServicio.getEmisor().getId());
-        return "redirect:/consumosServicios";
-    }
-    
-    @GetMapping("/consumosServicios/editar/{id}")
-    public String editar(@PathVariable("id") Long id, Model model){
-        ConsumoServicio consumoServicio = consumosServiciosRepository.getById(id);
-        if(consumoServicio != null){
-            model.addAttribute("consumoServicio", consumoServicio);
-            model.addAttribute("reservasAlojamiento", reservaAlojamientoRepository.getAll());
-            model.addAttribute("servicios", servicioRepository.getAll());
-            model.addAttribute("usuarios", usuarioRepository.getAll());
-            return "ConsumosServicios/editar";
-        }
-        else{
-            return "redirect:/consumosServicios";
-        }
-    }
-
-    @PostMapping("/consumosServicios/editar/{id}/guardar")
-    public String guardarEdicion(@PathVariable("id") Long id, @ModelAttribute ConsumoServicio consumoServicio){
-        consumosServiciosRepository.update(id, consumoServicio.getEstado().name(), consumoServicio.getFecha_inicio(), consumoServicio.getFecha_fin(), consumoServicio.getCosto(), consumoServicio.getReserva_alojamiento().getId(), consumoServicio.getServicio().getId(), consumoServicio.getEmisor().getId());
-        return "redirect:/consumosServicios";
-    }
-
-    @GetMapping("/consumosServicios/eliminar/{id}")
-    public String eliminar(@PathVariable("id") Long id){
-        consumosServiciosRepository.deleteById(id);
-        return "redirect:/consumosServicios";
+        return "ConsumosServicios/buenosClientes";
     }
 }

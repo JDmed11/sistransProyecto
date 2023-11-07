@@ -42,12 +42,22 @@ public class ConsumosServiciosController {
     @Autowired
     private UsuarioRepository usuarioRepository;
     
+    /**
+     * Obtiene todos los consumos de servicios
+     * @param model
+     * @return
+     */
     @GetMapping("/consumosServicios")
     public String getAll(Model model){
         model.addAttribute("consumosServicios", consumosServiciosRepository.getAll());
         return "ConsumosServicios/lista"; 
     }
 
+    /**
+     * crea un nuevo consumo de servicio
+     * @param model
+     * @return
+     */
     @GetMapping("/consumosServicios/nuevo")
     public String nuevo(Model model){
         model.addAttribute("consumoServicio", new ConsumoServicio());
@@ -58,6 +68,11 @@ public class ConsumosServiciosController {
         return "ConsumosServicios/nuevo";
     }
 
+    /**
+     * Guarda un nuevo consumo de servicio
+     * @param consumoServicio
+     * @return
+     */
     @PostMapping("/consumosServicios/nuevo/guardar")
     public String guardar(@ModelAttribute ConsumoServicio consumoServicio){
         consumoServicio.getReserva_alojamiento().setSaldo(consumoServicio.getReserva_alojamiento().getSaldo() + consumoServicio.getCosto());
@@ -65,6 +80,12 @@ public class ConsumosServiciosController {
         return "redirect:/consumosServicios";
     }
     
+    /**
+     * Edita un consumo de servicio
+     * @param id
+     * @param model
+     * @return
+     */
     @GetMapping("/consumosServicios/editar/{id}")
     public String editar(@PathVariable("id") Long id, Model model){
         ConsumoServicio consumoServicio = consumosServiciosRepository.getById(id);
@@ -80,12 +101,23 @@ public class ConsumosServiciosController {
         }
     }
 
+    /**
+     * Guarda la edición de un consumo de servicio
+     * @param id
+     * @param consumoServicio
+     * @return
+     */
     @PostMapping("/consumosServicios/editar/{id}/guardar")
     public String guardarEdicion(@PathVariable("id") Long id, @ModelAttribute ConsumoServicio consumoServicio){
         consumosServiciosRepository.update(id, consumoServicio.getEstado().name(), consumoServicio.getFecha_inicio(), consumoServicio.getFecha_fin(), consumoServicio.getCosto(), consumoServicio.getReserva_alojamiento().getId(), consumoServicio.getServicio().getId(), consumoServicio.getEmisor().getId());
         return "redirect:/consumosServicios";
     }
 
+    /**
+     * Elimina un consumo de servicio
+     * @param id
+     * @return
+     */
     @GetMapping("/consumosServicios/eliminar/{id}")
     public String eliminar(@PathVariable("id") Long id){
         consumosServiciosRepository.deleteById(id);
@@ -94,6 +126,13 @@ public class ConsumosServiciosController {
 
     //CONSULTAS AVANZADAS
 
+    /**
+     * Obtiene el recaudo de los servicios en un rango de fechas, despliega el formulario para ingresar las fechas
+     * @param model
+     * @param fecha_inicio
+     * @param fecha_fin
+     * @return
+     */
     @GetMapping("/consumosServicios/recaudo/fecha")
     public String getRecaudosServiciosFecha(Model model, String fecha_inicio, String fecha_fin){
 
@@ -104,6 +143,13 @@ public class ConsumosServiciosController {
     }
 
 
+    /**
+     * Obtiene el recaudo de los servicios en un rango de fechas, despliega el resultado de la consulta
+     * @param model
+     * @param fecha_inicio
+     * @param fecha_fin
+     * @return
+     */
     @GetMapping("/consumosServicios/recaudo")
     public String getRecaudosServicios(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
 
@@ -138,6 +184,13 @@ public class ConsumosServiciosController {
         return "ConsumosServicios/recaudos";
     }
 
+    /**
+     * Obtiene el ranking de los servicios mas solicitados en un rango de fechas, despliega el formulario para ingresar las fechas
+     * @param model
+     * @param fecha_inicio
+     * @param fecha_fin
+     * @return
+     */
     @GetMapping("/consumosServicios/ranking/fecha")
     public String getRankingServiciosFecha(Model model, String fecha_inicio, String fecha_fin){
             model.addAttribute("fecha_inicio", fecha_inicio);
@@ -146,6 +199,13 @@ public class ConsumosServiciosController {
     return "ConsumosServicios/rankingFecha";
     }
 
+    /**
+     * Obtiene el ranking de los servicios mas solicitados en un rango de fechas, despliega el resultado de la consulta
+     * @param model
+     * @param fecha_inicio
+     * @param fecha_fin
+     * @return
+     */
     @GetMapping("/consumosServicios/ranking")
     public String getRankingServicios(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
 
@@ -178,14 +238,27 @@ public class ConsumosServiciosController {
         return "ConsumosServicios/ranking";
     }
 
+    /**
+     * Obtiene la ocupacion de cada habitacion en un rango de fechas, despliega el formulario para ingresar las fechas
+     * @param model
+     * @param fecha_inicio
+     * @param fecha_fin
+     * @return
+     */
     @GetMapping("/consumosServicios/ocupacion/fecha")
-    //deberia ir en reservas de alojamiento
     public String getOcupacionHabitacionFecha(Model model, String fecha_inicio, String fecha_fin){
         model.addAttribute("fecha_inicio", fecha_inicio);
         model.addAttribute("fecha_fin", fecha_fin);
         return "ConsumosServicios/ocupacionFecha";
     }
 
+    /**
+     * Obtiene la ocupacion de cada habitacion en un rango de fechas, despliega el resultado de la consulta
+     * @param model
+     * @param fecha_inicio
+     * @param fecha_fin
+     * @return
+     */
     @GetMapping("/consumosServicios/ocupacion")
     //debera ir en reservas de alojamiento
     public String getOcupacionHabitacion(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
@@ -221,6 +294,14 @@ public class ConsumosServiciosController {
         return "ConsumosServicios/ocupacion";
     }
 
+    /**
+     * Obtiene el gasto de un usuario en un rango de fechas, despliega el formulario para ingresar las fechas
+     * @param model
+     * @param fecha_inicio
+     * @param fecha_fin
+     * @param documento
+     * @return
+     */
     @GetMapping("/consumosServicios/gastoUsuario/fecha")
     //deberia ir en reservas de alojamiento
     public String getGastoUsuarioFecha(Model model, String fecha_inicio, String fecha_fin, String documento){
@@ -230,8 +311,15 @@ public class ConsumosServiciosController {
         return "ConsumosServicios/gastoUsuarioFecha";
     }
 
+    /**
+     * Obtiene el gasto de un usuario en un rango de fechas, despliega el resultado de la consulta
+     * @param model
+     * @param fecha_inicio
+     * @param fecha_fin
+     * @param documento
+     * @return
+     */
     @GetMapping("/consumosServicios/gastoUsuario")
-    //deberia ir en reservas de alojamiento
     public String getGastoUsuario(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin, @RequestParam String documento){
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -266,13 +354,27 @@ public class ConsumosServiciosController {
         return "ConsumosServicios/gastoUsuario";
     }
 
-     @GetMapping("/consumosServicios/buenosClientes/fecha")
+    /**
+     * Obtiene los buenos clientes en un rango de fechas, despliega el formulario para ingresar las fechas
+     * @param model
+     * @param fecha_inicio
+     * @param fecha_fin
+     * @return
+     */
+    @GetMapping("/consumosServicios/buenosClientes/fecha")
     public String getBuenosClientesFecha(Model model, String fecha_inicio, String fecha_fin){
         model.addAttribute("fecha_inicio", fecha_inicio);
         model.addAttribute("fecha_fin", fecha_fin);
         return "ConsumosServicios/buenClienteFecha";
     }
 
+    /**
+     * Obtiene los buenos clientes en un rango de fechas, despliega el resultado de la consulta
+     * @param model
+     * @param fecha_inicio
+     * @param fecha_fin
+     * @return
+     */
     @GetMapping("/consumosServicios/buenosClientes")
     public String getBuenosClientes(Model model, @RequestParam String fecha_inicio, @RequestParam String fecha_fin){
 

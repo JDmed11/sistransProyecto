@@ -43,13 +43,33 @@ public interface ConsumoServicioRepository extends JpaRepository<ConsumoServicio
                 double getGasto();
         }
 
-
+        /**
+         * permite obtener todos los consumos de servicios
+         * Se limita a 20 registros para efectos de prueba y sustentación
+         * @return
+         */
         @Query(value = "SELECT * FROM consumos_servicios FETCH FIRST 20 ROWS ONLY", nativeQuery = true)
         public List<ConsumoServicio> getAll();
 
+        /**
+         * permite obtener un consumo de servicio por su id
+         * @param id
+         * @return
+         */
         @Query(value = "SELECT * FROM consumos_servicios WHERE id = :id", nativeQuery = true)
         public ConsumoServicio getById(@Param("id") Long id);
 
+        /**
+         * Inserta un consumo de servicio
+         * @param id
+         * @param estado
+         * @param fecha_inicio
+         * @param fecha_fin
+         * @param costo
+         * @param reserva_alojamiento
+         * @param servicio
+         * @param emisor
+         */
         @Modifying
         @Transactional
         @Query(value = "INSERT INTO consumos_servicios (id, estado, fecha_inicio, fecha_fin, costo, reservas_alojamiento_id, servicios_id, emisor) VALUES (:id, :estado, :fecha_inicio, :fecha_fin, :costo, :reserva_alojamiento, :servicio, :emisor)", nativeQuery = true)
@@ -59,6 +79,17 @@ public interface ConsumoServicioRepository extends JpaRepository<ConsumoServicio
                         @Param("reserva_alojamiento") Long reserva_alojamiento, @Param("servicio") Long servicio,
                         @Param("emisor") Long emisor);
 
+        /**
+         * permite actualizar un consumo de servicio
+         * @param id
+         * @param estado
+         * @param fecha_inicio
+         * @param fecha_fin
+         * @param costo
+         * @param reserva_alojamiento
+         * @param servicio
+         * @param emisor
+         */
         @Modifying
         @Transactional
         @Query(value = "UPDATE consumos_servicios SET estado = :estado, fecha_inicio = :fecha_inicio, fecha_fin = :fecha_fin, costo = :costo, reservas_alojamiento_id = :reserva_alojamiento, servicios_id = :servicio, emisor = :emisor WHERE id = :id", nativeQuery = true)
@@ -68,6 +99,10 @@ public interface ConsumoServicioRepository extends JpaRepository<ConsumoServicio
                         @Param("reserva_alojamiento") Long reserva_alojamiento, @Param("servicio") Long servicio,
                         @Param("emisor") Long emisor);
 
+        /**
+         * permite eliminar un consumo de servicio por su id
+         * @param id
+         */
         @Modifying
         @Transactional
         @Query(value = "DELETE FROM consumos_servicios WHERE id = :id", nativeQuery = true)
@@ -75,26 +110,25 @@ public interface ConsumoServicioRepository extends JpaRepository<ConsumoServicio
 
 
         
-        /**permite obtener el total recaudado por los servicios en un rango de fechas
+        /**permite obtener el total recaudado por los servicios en un rango de fechas RF1
         
                 SELECT SUM(costo) as recaudo, RA.habitacion FROM consumos_servicios CS 
                 INNER JOIN reservas_alojamiento RA ON CS.reservas_alojamiento_id = RA.id
                 WHERE fecha_inicio BETWEEN '01/01/23' AND '31/12/23'
                 GROUP BY RA.habitacion;
 
-                LISTOOO
          */
         @Query(value ="select sum(saldo) as recaudo, habitacion from reservas_alojamiento\n" + //
                         "where fecha_entrada between :fecha_inicio and :fecha_fin\n" + //
                         "and fecha_salida <= :fecha_fin\n" + //
-                        "group by habitacion", nativeQuery = true)
+                        "group by habitacion ORDER BY habitacion ASC", nativeQuery = true)
         public Collection<consumosHabitacion> getRecaudoServicios(@Param("fecha_inicio") String fecha_inicio,
                         @Param("fecha_fin") String fecha_fin);
 
 
 
 
-        /** permite obtener los servicios mas solicitados en orden descendente
+        /** permite obtener los servicios mas solicitados en orden descendente RF2
          
                 SELECT s.nombre, count(*) AS cantidad FROM consumos_servicios CS INNER JOIN
                 servicios S ON cs.servicios_id = s.id
@@ -113,7 +147,7 @@ public interface ConsumoServicioRepository extends JpaRepository<ConsumoServicio
 
 
         /**
-         * permite obtener la ocupacion de cada habitacion en un rango de fechas dado
+         * permite obtener la ocupacion de cada habitacion en un rango de fechas dado RF3
 
                 SELECT SUM(fecha_salida - fecha_entrada) AS dias_ocupado, habitacion,
                 ROUND(SUM(fecha_salida - fecha_entrada)/365,4)*100 AS ocupacion_por
@@ -128,12 +162,12 @@ public interface ConsumoServicioRepository extends JpaRepository<ConsumoServicio
                         "                FROM reservas_alojamiento\n" + //
                         "                WHERE fecha_entrada BETWEEN :fecha_inicio AND :fecha_fin \n" + //
                         "                AND fecha_salida BETWEEN :fecha_inicio AND :fecha_fin\n" + //
-                        "                GROUP BY habitacion", nativeQuery = true)
+                        "                GROUP BY habitacion ORDER BY habitacion ASC", nativeQuery = true)
         public Collection<ocupacionHabitacion> getOcupacionHabitacion(@Param("fecha_inicio") String fecha_inicio, @Param("fecha_fin") String fecha_fin);
 
 
 
-        /** permite MOSTRAR EL CONSUMO EN HOTELANDES POR UN USUARIO DADO, EN UN RANGO DE FECHAS INDICADO.
+        /** permite MOSTRAR EL CONSUMO EN HOTELANDES POR UN USUARIO DADO, EN UN RANGO DE FECHAS INDICADO. RF5
                 SELECT SUM(ra.saldo) FROM reservas_alojamiento RA 
                 INNER JOIN usuarios U ON ra.cliente = u.id
                 WHERE u.numero_documento = '1000796343'
@@ -149,7 +183,7 @@ public interface ConsumoServicioRepository extends JpaRepository<ConsumoServicio
 
 
         /*
-         * Encontrar buenos clientes
+         * Encontrar buenos clientes RF7
         select sum(fecha_salida-fecha_entrada) as dias, sum(saldo) as gasto, u.nombre as nombre, u.numero_documento as documento 
         from reservas_alojamiento RA inner join usuarios U
         on u.id = ra.cliente
@@ -162,7 +196,7 @@ public interface ConsumoServicioRepository extends JpaRepository<ConsumoServicio
                         "on u.id = ra.cliente\n" + //
                         "where ra.fecha_entrada >= :fecha_inicio AND fecha_salida <= :fecha_fin\n" + //
                         "group by u.nombre, u.numero_documento\n" + //
-                        "having sum(fecha_salida-fecha_entrada) >= 7 and sum(saldo) > 1500000", nativeQuery = true)
+                        "having sum(fecha_salida-fecha_entrada) >= 7 and sum(saldo) > 150000 ORDER BY gasto DESC", nativeQuery = true)
         public Collection<BuenosClientes> getBuenosClientes(@Param("fecha_inicio") String fecha_inicio, @Param("fecha_fin") String fecha_fin);
 }
 

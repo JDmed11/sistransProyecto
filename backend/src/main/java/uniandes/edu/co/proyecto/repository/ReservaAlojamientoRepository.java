@@ -13,6 +13,11 @@ import uniandes.edu.co.proyecto.model.ReservaAlojamiento;
 
 public interface ReservaAlojamientoRepository extends JpaRepository<ReservaAlojamiento, Long> {
 
+        /**
+         * permite obtener todas las reservas de alojamiento
+         * Se limita a 20 registros para efectos de prueba y sustentación
+         * @return
+         */
         @Query(value = "SELECT * FROM reservas_alojamiento FETCH FIRST 20 ROWS ONLY", nativeQuery = true)
         public List<ReservaAlojamiento> getAll();
 

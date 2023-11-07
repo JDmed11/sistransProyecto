@@ -5,10 +5,10 @@ CONSULTAS SQL
 /**
 RF1
 */
-"SELECT SUM(saldo) AS recaudo, habitacion FROM reservas_alojamiento\n" + //
-"WHERE fecha_entrada BETWEEN :fecha_inicio AND :fecha_fin\n" + //
-"AND fecha_salida <= :fecha_fin\n" + //
-"GROUP BY habitacion"
+"SELECT SUM(saldo) AS recaudo, habitacion FROM reservas_alojamiento
+WHERE fecha_entrada BETWEEN :fecha_inicio AND :fecha_fin
+AND fecha_salida <= :fecha_fin
+GROUP BY habitacion"
 
 /**
 RF2

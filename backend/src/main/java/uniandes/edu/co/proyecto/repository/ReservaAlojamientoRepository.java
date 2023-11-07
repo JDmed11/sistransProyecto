@@ -13,7 +13,7 @@ import uniandes.edu.co.proyecto.model.ReservaAlojamiento;
 
 public interface ReservaAlojamientoRepository extends JpaRepository<ReservaAlojamiento, Long> {
 
-        @Query(value = "SELECT * FROM reservas_alojamiento", nativeQuery = true)
+        @Query(value = "SELECT * FROM reservas_alojamiento FETCH FIRST 20 ROWS ONLY", nativeQuery = true)
         public List<ReservaAlojamiento> getAll();
 
         @Query(value = "SELECT * FROM reservas_alojamiento WHERE id = :id", nativeQuery = true)

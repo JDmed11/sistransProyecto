@@ -44,7 +44,7 @@ public interface ConsumoServicioRepository extends JpaRepository<ConsumoServicio
         }
 
 
-        @Query(value = "SELECT * FROM consumos_servicios", nativeQuery = true)
+        @Query(value = "SELECT * FROM consumos_servicios FETCH FIRST 20 ROWS ONLY", nativeQuery = true)
         public List<ConsumoServicio> getAll();
 
         @Query(value = "SELECT * FROM consumos_servicios WHERE id = :id", nativeQuery = true)

@@ -162,7 +162,7 @@ public interface ConsumoServicioRepository extends JpaRepository<ConsumoServicio
                         "on u.id = ra.cliente\n" + //
                         "where ra.fecha_entrada >= :fecha_inicio AND fecha_salida <= :fecha_fin\n" + //
                         "group by u.nombre, u.numero_documento\n" + //
-                        "having sum(fecha_salida-fecha_entrada) >= 7 and sum(saldo) > 1500", nativeQuery = true)
+                        "having sum(fecha_salida-fecha_entrada) >= 7 and sum(saldo) > 1500000", nativeQuery = true)
         public Collection<BuenosClientes> getBuenosClientes(@Param("fecha_inicio") String fecha_inicio, @Param("fecha_fin") String fecha_fin);
 }
 
